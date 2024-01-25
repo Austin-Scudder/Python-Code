@@ -1,6 +1,6 @@
 import random as rand;
 
-
+#test Comment
 #make the board: 
 def boardcreate():
     rows, cols = (3, 10)
