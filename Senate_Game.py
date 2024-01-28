@@ -21,7 +21,7 @@ def boardcreate():
 def printboard(board):
     rows= 3
     cols = 10
-    curline = [10] 
+    curline = [cols] 
     for i in range(rows):
         curline = board[i]
         print(curline)
@@ -47,9 +47,10 @@ def roll():
 
 #Calculate what the valid board location is for moving a piece or move it off the board
 def calculatemove(startpos, moveval):
+    startpost = int(startpos[1])
     print(startpos)
     print(moveval)
-    startpos[1] += moveval
+    
     print(startpos)
     if startpos[1] >= 10:
         if startpos[0] >= 3:
@@ -63,7 +64,7 @@ def calculatemove(startpos, moveval):
             dest = startpos
             return dest
     else:
-        startpos[1] += moveval
+        startpos = startpos[1] , startpost+moveval
         dest = startpos
         return dest
 
@@ -73,9 +74,10 @@ def locationcheck(board, location):
     return board[location[0]][location[1]]
  
 
-def validmove(board, destpos, player):
+def validmove(board, piece, destpos,):
+    print(destpos)
     checkspace = board[destpos[0]][destpos[1]]
-    if checkspace[1] == player[0]:
+    if checkspace[1] == piece[1]:
         print("you have a piece on your team there")
         return False
     elif checkspace[1] == 0:
@@ -89,30 +91,36 @@ def validmove(board, destpos, player):
 #calculates and performs a move on a piece
 def move_piece(board, piece, move, player):
 
+    piece = input("What piece would you like to move?  ")
+
     #find where the piece you want to move is and if it exists
-    startpos = findpiece(board, piece)
+    startpos =  findpiece(board, piece)
     if startpos[1] == 11:
         print("That piece does not exist on the board! Select a different piece to move.")
-        #move_piece(board, piece, move)
+        board = move_piece(board, piece, move, player)
     elif piece[1] != player[0]:
         print("this is not your piece to move! Select one of your pieces to move.")
-        #move_piece(board, piece, move)
+        board = move_piece(board, piece, move, player)
     else:
         #calculate where piece is trying to move
         destpos = calculatemove(startpos, move)
-        if destpos[1] == 11:
+        #check for off board move
+        if destpos[1] == 11 :
             print("you moved the piece off the board and have gained a point")
             board[startpos[0]][startpos[1]] = '0'
             player[1] = str(int(player[1]) + 1)
             return board, player[0]
         elif validmove(board, piece,destpos):
+            print("Test: found a valid move")
             holdpiece = board[destpos[0]][destpos[1]]
             board[destpos[0]][destpos[1]] = piece
-            board[destpos[0]][destpos[1]] = holdpiece
+            printboard(board)
+            board[startpos[0]][startpos[1]] = holdpiece
+            printboard(board)
             return board
         else:
             print("select a different piece to move.")
-            #move_piece(board, piece, move)
+            board = move_piece(board, piece, move, player)
 
     return board
 
@@ -126,10 +134,19 @@ player2= "B0"
 #calculatemove(board, [rand.randrange(len(board)),rand.randrange(len(board[0]))], roll())
 
 #establish loop end state bool value
-endstate = not True
+endstate = True
+printboard(board)
+
 
 while (endstate):
-    endstate = True
+    #player 1 moves default white
+    proll = 0 
+    piece = "1M"
+    proll = roll()
+    print( str(proll) + " sticks came color side up!")
+    board = move_piece(board, piece, proll, player1)
+    printboard(board)
+    endstate = False
 
 
 
