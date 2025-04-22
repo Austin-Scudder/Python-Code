@@ -19,8 +19,12 @@ def boardcreate():
 
 # prints the board line by line
 def printboard(board):
-    rows= 3
-    cols = 10
+    rows= len(board)
+    print ("rows: " + str(rows))
+
+    cols = len(board[0])
+    print("cols: " + str(cols))
+
     curline = [cols] 
     for i in range(rows):
         curline = board[i]
@@ -31,9 +35,11 @@ def printboard(board):
 def findpiece(board, piece):
     rows= len(board)
     cols = len(board[0])
+    #debug check: print("Rows: " + str(rows) + "Cols: " + str(cols))
     piecepos = 11, 11
     for i in range(cols):
         for j in range(rows):
+            #debug check: print(board[j][i])
             if board[j][i] == piece:
                 piecepos = j, i
     #print (piecepos)
@@ -45,26 +51,28 @@ def roll():
     return rand.randrange(1,6)
 
 
-#Calculate what the valid board location is for moving a piece or move it off the board
+#Calculate what the valid board location is for moving a piece or move it off the board5
 def calculatemove(startpos, moveval):
-    startpost = int(startpos[1])
+    startposx = int(startpos[0])
+    startposy = int(startpos[1])
     print(startpos)
     print(moveval)
     
     print(startpos)
-    if startpos[1] >= 10:
-        if startpos[0] >= 3:
+    if startposy + moveval >= 10:
+        if startposx + 1  >= 3:
             print("piece is off board")
             dest = 11,11
             return dest
         else:
-            startpos[0] += 1
-            startpos[1] -= 10
-            print(startpos)
-            dest = startpos
+            startposx += 1
+            startposy -= 10
+            startposy += moveval
+            print(startposx)
+            dest = startposx , startposy
             return dest
     else:
-        startpos = startpos[1] , startpost+moveval
+        startpos = startposx, startposy +moveval
         dest = startpos
         return dest
 
@@ -77,14 +85,15 @@ def locationcheck(board, location):
 def validmove(board, piece, destpos,):
     print(destpos)
     checkspace = board[destpos[0]][destpos[1]]
-    if checkspace[1] == piece[1]:
-        print("you have a piece on your team there")
-        return False
-    elif checkspace[1] == 0:
-        print("moving the piece the designated distance")
-        return True 
+    if len(checkspace) > 1:
+        if checkspace[1] == piece[1]:
+            print("you have a piece on your team there.")
+            return False
+        elif checkspace[1] != piece[1]:
+            print("swaping enemy piece with your own.")
+            return True 
     else:
-        print("swaping enemy piece with your own")
+        print(" moving the piece the designated distance.")
         return True
 
 
@@ -92,8 +101,10 @@ def validmove(board, piece, destpos,):
 def move_piece(board, piece, move, player):
 
     piece = input("What piece would you like to move?  ")
-
+    if piece == "end":
+        return board, False
     #find where the piece you want to move is and if it exists
+    #printboard(board)
     startpos =  findpiece(board, piece)
     if startpos[1] == 11:
         print("That piece does not exist on the board! Select a different piece to move.")
@@ -109,7 +120,7 @@ def move_piece(board, piece, move, player):
             print("you moved the piece off the board and have gained a point")
             board[startpos[0]][startpos[1]] = '0'
             player[1] = str(int(player[1]) + 1)
-            return board, player[0]
+            return board, True
         elif validmove(board, piece,destpos):
             print("Test: found a valid move")
             holdpiece = board[destpos[0]][destpos[1]]
@@ -117,12 +128,12 @@ def move_piece(board, piece, move, player):
             printboard(board)
             board[startpos[0]][startpos[1]] = holdpiece
             printboard(board)
-            return board
+            return board, True
         else:
             print("select a different piece to move.")
             board = move_piece(board, piece, move, player)
 
-    return board
+    return board, True
 
 
 board = boardcreate()
@@ -144,9 +155,12 @@ while (endstate):
     piece = "1M"
     proll = roll()
     print( str(proll) + " sticks came color side up!")
-    board = move_piece(board, piece, proll, player1)
+    board, endstate = move_piece(board, piece, proll, player1)
     printboard(board)
-    endstate = False
+    proll = roll()
+    print( str(proll) + " sticks came color side up!")
+    board, endstate = move_piece(board, piece, proll, player2)
+    printboard(board)
 
 
 
