@@ -13,9 +13,11 @@ mtgset = input('Enter Set Code: ')
 
 #you need the f to format espcially passing information from the rest of the code into the url.
 api_url = f'{base_url}?exact={cardname}&set={mtgset}'
+
 #generate the url based on parameter inputs
 response = requests.get(api_url)
 data = response.json()
+
 print(api_url)
 print(data)
 
