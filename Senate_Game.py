@@ -20,10 +20,10 @@ def boardcreate():
 # prints the board line by line
 def printboard(board):
     rows= len(board)
-    print ("rows: " + str(rows))
+    #print ("rows: " + str(rows))
 
     cols = len(board[0])
-    print("cols: " + str(cols))
+    #print("cols: " + str(cols))
 
     curline = [cols] 
     for i in range(rows):
@@ -39,8 +39,11 @@ def findpiece(board, piece):
     piecepos = 11, 11
     for i in range(cols):
         for j in range(rows):
-            #debug check: print(board[j][i])
-            if board[j][i] == piece:
+            #debug check: 
+            #print( str(j) + str(i))
+            #print(board[j][i])
+            checkpiece = board[j][i]
+            if checkpiece == piece:
                 piecepos = j, i
     #print (piecepos)
     return piecepos
@@ -68,7 +71,8 @@ def calculatemove(startpos, moveval):
             startposx += 1
             startposy -= 10
             startposy += moveval
-            print(startposx)
+            #Debug for positions: 
+            #print(startposx)
             dest = startposx , startposy
             return dest
     else:
@@ -99,19 +103,24 @@ def validmove(board, piece, destpos,):
 
 #calculates and performs a move on a piece
 def move_piece(board, piece, move, player):
-
+    endstate = True
+    scorechange = 0
+    if move == 0:
+        move = roll()
+    print( str(move) + " sticks came color side up!")
     piece = input("What piece would you like to move?  ")
     if piece == "end":
-        return board, False
+        endstate = False
+        return board, endstate, scorechange
     #find where the piece you want to move is and if it exists
-    #printboard(board)
+    printboard(board)
     startpos =  findpiece(board, piece)
     if startpos[1] == 11:
-        print("That piece does not exist on the board! Select a different piece to move.")
-        board = move_piece(board, piece, move, player)
+        print("That piece does not exist on thee board! Select a different piece to move.")
+        board, endstate, scorechange  = move_piece(board, piece, move, player)
     elif piece[1] != player[0]:
         print("this is not your piece to move! Select one of your pieces to move.")
-        board = move_piece(board, piece, move, player)
+        board, endstate, scorechange  = move_piece(board, piece, move, player)
     else:
         #calculate where piece is trying to move
         destpos = calculatemove(startpos, move)
@@ -119,26 +128,30 @@ def move_piece(board, piece, move, player):
         if destpos[1] == 11 :
             print("you moved the piece off the board and have gained a point")
             board[startpos[0]][startpos[1]] = '0'
-            player[1] = str(int(player[1]) + 1)
-            return board, True
+            scorechange = 1
+            return board, endstate, scorechange
         elif validmove(board, piece,destpos):
-            print("Test: found a valid move")
+            #print("Test: found a valid move")
             holdpiece = board[destpos[0]][destpos[1]]
             board[destpos[0]][destpos[1]] = piece
-            printboard(board)
+            #Debug Board moves
+            #printboard(board)
             board[startpos[0]][startpos[1]] = holdpiece
-            printboard(board)
-            return board, True
+            #Debug Board moves
+            #printboard(board)
+            return board, endstate, scorechange
         else:
             print("select a different piece to move.")
-            board = move_piece(board, piece, move, player)
+            board, endstate, scorechange = move_piece(board, piece, move, player)
 
-    return board, True
+    return board, endstate, scorechange
 
 
 board = boardcreate()
-player1= "W0"
-player2= "B0"
+player1= "W6"
+player2= "B6"
+playerscore1 = 0
+playerscore2 = 0
 #printboard(board)
 
 #random move
@@ -147,21 +160,44 @@ player2= "B0"
 #establish loop end state bool value
 endstate = True
 printboard(board)
-
+gofirst = rand.randint(0,1)
+if gofirst == 1:
+    player = player1
+    print("Player 1 = W")
+else:
+    player = player2
+    print("Player 1 = B")
+print (gofirst)
 
 while (endstate):
-    #player 1 moves default white
+
+    #create the loop start variables
     proll = 0 
     piece = "1M"
-    proll = roll()
-    print( str(proll) + " sticks came color side up!")
-    board, endstate = move_piece(board, piece, proll, player1)
+    scorechange = 0
+    #conduct a move
+    board, endstate, scorechange = move_piece(board, piece, proll, player)
+    #Check for score changes
+    if player == player1:
+        playerscore1 +=scorechange
+    elif player == player2:
+        playerscore2 += scorechange
+    #change the player over.
+    if player == player1: 
+        player = player2
+    else: 
+        player = player1
     printboard(board)
-    proll = roll()
-    print( str(proll) + " sticks came color side up!")
-    board, endstate = move_piece(board, piece, proll, player2)
-    printboard(board)
-
+    print("player 1 score = " + str(playerscore1))
+    print("player 2 score = " + str(playerscore2))
+    if playerscore1 == 5:
+        print("Player 1 Wins!")
+        endstate = False
+        break
+    if playerscore2 == 5:
+        print("Player 2 Wins!")
+        endstate = False
+        break
 
 
 
