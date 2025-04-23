@@ -1,6 +1,0 @@
-Get CSV of cards from Moxfield.
-Pull down the card data from scyfall
-Connect that data to Google for now. 
-Later move that data to a database and manipulate the data there
-Take the data and move it to the SQL database
-Perform analysis and set up Table flags based on the data. 

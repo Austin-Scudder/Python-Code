@@ -3,7 +3,7 @@
 import csv
 
 #name the file
-filename = "Moxfield Selling List 4-21-2025.csv"
+filename = "Magic card  Comparison\Moxfield Selling List 4-21-2025.csv"
 
 #initializing the Titles and rows list
 fields = []
@@ -28,10 +28,10 @@ with open( filename, 'r') as csvfile:
 print('Field names are:' + ', '.join(field for field in fields))
 
 #printing first 5 rows
-print('nFiest 5 rows are:\n')
-for row in rows[:5]:
+#print('nFiest 5 rows are:\n')
+#for row in rows[:5]:
     #paring each column of a row
-    for col in row:
-        print("%10s" % col, end=" "),
-    print('\n')
+ #   for col in row:
+  #      print("%10s" % col, end=" "),
+   # print('\n')
 

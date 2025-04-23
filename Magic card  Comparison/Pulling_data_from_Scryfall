@@ -1,0 +1,35 @@
+import requests
+import json
+
+
+class Scryfall_Requests:
+
+    def __init__(self):
+        #keep the base url for posterity
+        base_url = "https://api.scryfall.com/cards/named"
+
+        # Take parameter inputs
+        cardname = input('Enter Card name: ')
+        mtgset = input('Enter Set Code: ') 
+
+    #the following is an example query for Scryfall to find the card abrupt decay from the guildmasters kit set
+    #https://api.scryfall.com/cards/named?exact=abrupt_decay&set=gk1 
+
+    def lookup(self):
+        #you need the f to format espcially passing information from the rest of the code into the url.
+        api_url = f'{self.base_url}?exact={self.cardname}&set={self.mtgset}'
+
+        #generate the url based on parameter inputs
+        response = requests.get(api_url)
+        data = response.json()
+
+        print(api_url)
+        print(data)
+
+        #formatting json data
+        parsed_data= json.dumps(data, indent = 4)
+        print(parsed_data)
+
+        #getting specific data from the file:
+        price = data["prices"]["usd"]
+        print(price)
